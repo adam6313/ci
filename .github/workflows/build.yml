@@ -17,7 +17,6 @@ jobs:
 
     steps:
       - name: Build test environment
-        uses: actions/checkout@v2
         run: |
           docker run --rm -it -v ${PWD}:/app golang
           cd /app
