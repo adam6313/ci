@@ -20,7 +20,7 @@ jobs:
 
       - name: Build test environment
         run: |
-          docker run --rm -it -v ${PWD}:/app golang
+          docker run --rm -w /app -v ${PWD}:/app golang go test ./...
           cd /app
           go test ./...
     #steps:
