@@ -9,11 +9,11 @@ jobs:
     #go-version: [1.14.x]
     runs-on: self-hosted
 
-    #services:
-    #mongo:
-    #image: mongo:latest
-    #ports:
-    #- 27017:27017
+    services:
+      mongo:
+        image: mongo:latest
+        ports:
+          - 27017:27017
 
     steps:
       - uses: actions/checkout@v2
