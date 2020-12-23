@@ -3,7 +3,8 @@ name: continuous integration
 on:
   push:
     tags:
-      - "v*.*.*.beta.*"
+      - "v*.*.*.beta"
+      - "v*.*.*.beta*"
 
 jobs:
   #test:
@@ -46,7 +47,7 @@ jobs:
 
       - name: Set Image Name
         run: |
-          echo "IMAGE_NAME=docker.pkg.github.com/${{ github.event.repository }}:${{ env.RELEASE_VERSION }}" >> $GITHUB_ENV
+          echo "IMAGE_NAME=docker.pkg.github.com/${{ github.event.repository.name }}:${{ env.RELEASE_VERSION }}" >> $GITHUB_ENV
 
       - name: echo
         run: |
