@@ -38,7 +38,6 @@ jobs:
         run: |
           echo ${{ github.event_name }}
           go test ./...
-        if: failed()
 
   build:
     runs-on: ubuntu-latest
