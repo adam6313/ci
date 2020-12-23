@@ -18,11 +18,11 @@ jobs:
       matrix:
         go-version: [1.14.x]
 
-    services:
-      mongo:
-        image: mongo:latest
-        ports:
-          - 27017:27017
+    #services:
+    #mongo:
+    #image: mongo:latest
+    #ports:
+    #- 27017:27017
 
     steps:
       - name: Install Go
@@ -40,16 +40,14 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    if: always()
-    #if: always() && success()
+    #if: always()
+    if: always() && success()
     needs: test
     steps:
       - uses: actions/checkout@v2
       - name: Set
         run: |
           echo 123
-          echo ${{ github.event.head_commit.message }}
-          echo ${{ steps.check.outcome  }}
     #if: always() && needs.test.outputs.job_status
   #build:
   #runs-on: ubuntu-latest
