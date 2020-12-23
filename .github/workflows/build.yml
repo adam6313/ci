@@ -18,11 +18,11 @@ jobs:
       matrix:
         go-version: [1.14.x]
 
-    services:
-      mongo:
-        image: mongo:latest
-        ports:
-          - 27017:27017
+    #services:
+    #mongo:
+    #image: mongo:latest
+    #ports:
+    #- 27017:27017
 
     steps:
       - name: Install Go
@@ -57,60 +57,64 @@ jobs:
         run: |
           echo "IMAGE_NAME=docker.pkg.github.com/${{ github.repository }}/${{ github.event.repository.name }}:${{ env.RELEASE_VERSION }}" >> $GITHUB_ENV
           echo "GCR_IMAGE_NAME=$GCR_HOST/$PROJECT_ID/${{ github.event.repository.name }}:${{  env.RELEASE_VERSION }}" >> $GITHUB_ENV
-          echo ${{ env.IMAGE_NAME }}
-          echo ${{ env.GCR_IMAGE_NAME }}
-      #- name: Build The Docker Image
-      #run: |
-      #make \
-      #docker-build \
-      #TAG=${{ env.RELEASE_VERSION }} \
-      #IMAGE_NAME=${{ env.IMAGE_NAME }} \
-      #DATE=${{ github.event.head_commit.timestamp }}
-      #- name: Push Image To Github Package
-      #if: github.event_name == 'push'
-      #run: |
-      #docker login docker.pkg.github.com -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
-      #docker push ${{ env.IMAGE_NAME}}
-      #- name: Push Image To GCR
-      #if: github.event_name == 'release'
-      #run: |
-      #echo ${{ secrets.GCLOUD_SERVICE_KEY }} | docker login -u _json_key --password-stdin https://asia.gcr.io/
-      #docker push ${{ env.GCR_IMAGE_NAME }}
-      #- name: Remove Image
-      #run: |
-      #docker image rm ${{ env.IMAGE_NAME}}
-      #docker image prune -f --filter label=stage=builder
-      #- name: Delete old version
-      #if: github.event_name == 'push'
-      #uses: actions/delete-package-versions@v1
-      #with:
-      #num-old-versions-to-delete: 1
-      #package-name: ${{ github.event.repository.name }}
-      #token: ${{ secrets.GITHUB_TOKEN }}
-      #- name: Post Version
-      #env:
-      #HOST: ${{ secrets.VERSION_URL }}
-      #run: |
-      #curl -s -o /dev/null --request POST $HOST \
-      #--form 'project=${{ github.event.repository.name }}' \
-      #--form 'version=${{ env.RELEASE_VERSION }}' \
-      #--form 'date=${{ github.event.head_commit.timestamp }}' \
-      #--form 'commitid=${{ github.event.head_commit.id }}' \
-      #--form 'commit=${{ github.event.head_commit.message }}' \
-      #--form 'user=${{ github.event.head_commit.author.name }}' \
-      #--form 'email=${{ github.event.head_commit.author.email }}' \
-      #--form 'commitLink=https://github.com/${{ github.repository }}/commit/${{ github.event.head_commit.id }}'
-      #- name: Slack Notification
-      #uses: 8398a7/action-slack@v3.7.0
-      #with:
-      #status: ${{ job.status }}
-      #fields: all
-      #mention: here
-      #channel: "#devops"
-      #username: "tyr-bot-github"
-      #author_name: ${{ github.event.head_commit.author.name }}
-      #icon_url: "https://github.githubassets.com/images/modules/logos_page/Octocat.png"
-      #env:
-      #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #SLACK_WEBHOOK_URL: ${{ secrets.SLACK_HOST }}
-      #if: always()
+
+      - name: Build The Docker Image
+        run: |
+          make \
+          docker-build \
+          TAG=${{ env.RELEASE_VERSION }} \
+          IMAGE_NAME=${{ env.IMAGE_NAME }} \
+          DATE=${{ github.event.head_commit.timestamp }}
+
+      - name: Push Image To Github Package
+        if: github.event_name == 'push'
+        run: |
+          docker login docker.pkg.github.com -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+          docker push ${{ env.IMAGE_NAME}}
+
+      - name: Push Image To GCR
+        if: github.event_name == 'release'
+        run: |
+          echo ${{ secrets.GCLOUD_SERVICE_KEY }} | docker login -u _json_key --password-stdin https://asia.gcr.io/
+          docker push ${{ env.GCR_IMAGE_NAME }}
+
+      - name: Remove Image
+        run: |
+          docker image rm ${{ env.IMAGE_NAME}}
+          docker image prune -f --filter label=stage=builder
+
+      - name: Delete old version
+        if: github.event_name == 'push'
+        uses: actions/delete-package-versions@v1
+        with:
+          num-old-versions-to-delete: 1
+          package-name: ${{ github.event.repository.name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Post Version
+        env:
+          HOST: ${{ secrets.VERSION_URL }}
+        run: |
+          curl -s -o /dev/null --request POST $HOST \
+          --form 'project=${{ github.event.repository.name }}' \
+          --form 'version=${{ env.RELEASE_VERSION }}' \
+          --form 'date=${{ github.event.head_commit.timestamp }}' \
+          --form 'commitid=${{ github.event.head_commit.id }}' \
+          --form 'commit=${{ github.event.head_commit.message }}' \
+          --form 'user=${{ github.event.head_commit.author.name }}' \
+          --form 'email=${{ github.event.head_commit.author.email }}' \
+          --form 'commitLink=https://github.com/${{ github.repository }}/commit/${{ github.event.head_commit.id }}'
+      - name: Slack Notification
+        uses: 8398a7/action-slack@v3.7.0
+        with:
+          status: ${{ job.status }}
+          fields: all
+          mention: here
+          channel: "#devops"
+          username: "tyr-bot-github"
+          author_name: ${{ github.event.head_commit.author.name }}
+          icon_url: "https://github.githubassets.com/images/modules/logos_page/Octocat.png"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_HOST }}
+        if: always()
