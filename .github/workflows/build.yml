@@ -1,15 +1,14 @@
 name: ci
 
-on: push
-#on:
-#push:
-#tags:
-#- "v*.*.*.beta"
-#- "v*.*.*.beta*"
+on:
+  push:
+    tags:
+      - "v*.*.*.beta"
+      - "v*.*.*.beta*"
 
-#release:
-#types:
-#- created
+  release:
+    types:
+      - created
 
 jobs:
   test:
