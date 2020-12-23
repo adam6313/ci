@@ -12,6 +12,10 @@ on:
 
 jobs:
   test:
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -25,30 +29,28 @@ jobs:
 
     steps:
       - name: Install Go
-        if: github.event_name == 'push'
         uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go-version }}
 
       - name: Git checkout
-        if: github.event_name == 'push'
         uses: actions/checkout@v2
 
       - name: Run Test
-        if: github.event_name == 'push'
         run: |
           echo ${{ github.event_name }}
           go test ./...
 
   build:
     runs-on: ubuntu-latest
-    if: success()
+    #if: always() && success()
     needs: test
     steps:
       - uses: actions/checkout@v2
       - name: Set
         run: |
           echo 123
+          echo ${{ needs.pre_job.outputs.should_skip }}
     #if: always() && needs.test.outputs.job_status
   #build:
   #runs-on: ubuntu-latest
