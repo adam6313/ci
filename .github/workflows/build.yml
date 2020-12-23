@@ -47,7 +47,7 @@ jobs:
 
       - name: Set Image Name
         run: |
-          echo "IMAGE_NAME=docker.pkg.github.com/${{ github.event.repository.name }}:${{ env.RELEASE_VERSION }}" >> $GITHUB_ENV
+          echo "IMAGE_NAME=docker.pkg.github.com/${{ github.repository }}/${{ github.event.repository.name }}:${{ env.RELEASE_VERSION }}" >> $GITHUB_ENV
 
       - name: echo
         run: |
