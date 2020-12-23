@@ -41,7 +41,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     #if: always()
-    if: always() && success()
+    if: always() && success() || github.event_name == 'release'
     needs: test
     steps:
       - uses: actions/checkout@v2
