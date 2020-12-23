@@ -3,8 +3,7 @@ name: continuous integration
 on:
   push:
     branches:
-      - refs/tags/v*.*.*
-      #- v*.*.*_dev
+      - v*.*.*_dev
     #tags:
     #- "v*.*.*"
 
