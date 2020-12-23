@@ -39,9 +39,9 @@ jobs:
           go test ./...
 
   build:
+    runs-on: ubuntu-latest
     if: success()
     needs: test
-    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Set
