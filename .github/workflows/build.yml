@@ -42,9 +42,8 @@ jobs:
 
       - name: Set Version
         run: |
-          echo "::set-env name=HEAD_TAG::$(git tag --points-at HEAD)"
           #echo "::stop-commands::`echo -n ${{ github.token }} | sha256sum | head -c 64`"
-          echo "RELEASE_VERSION=${GITHUB_REF:10}"
+          echo "RELEASE_VERSION=${GITHUB_REF}"
           echo ${RELEASE_VERSION}
           #echo "::set-env name=RELEASE_VERSION::${GITHUB_REF:10}"
       #- name: Set Image Name
