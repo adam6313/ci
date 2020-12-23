@@ -25,6 +25,9 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
+      - name: Git checkout
+        uses: actions/checkout@v2
+
       - name: Run Test
         run: |
           go test ./...
