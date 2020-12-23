@@ -40,12 +40,13 @@ jobs:
           go test ./...
 
   build:
+    if: success()
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Set
         run: |
-          echo ${ needs.test }
+          echo 123
     #if: always() && needs.test.outputs.job_status
   #build:
   #runs-on: ubuntu-latest
