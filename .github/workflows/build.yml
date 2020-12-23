@@ -6,6 +6,10 @@ on:
       - "v*.*.*.beta"
       - "v*.*.*.beta*"
 
+  release:
+    types:
+      - created
+
 jobs:
   test:
     runs-on: ubuntu-latest
