@@ -2,8 +2,13 @@ name: continuous integration
 
 on:
   push:
-    branches:
-      - v*.*.*_dev
+    tags:
+      - "v*.*.*.beta"
+      - "v*.*.*.beta*"
+
+  release:
+    types:
+      - created
 
 jobs:
   test:
@@ -30,3 +35,43 @@ jobs:
       - name: Run Test
         run: |
           go test ./...
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set Version
+        run: |
+          echo "RELEASE_VERSION=${GITHUB_REF:11}" >> $GITHUB_ENV
+
+      - name: Set Image Name
+        run: |
+          echo "IMAGE_NAME=docker.pkg.github.com/${{ github.repository }}/${{ github.event.repository.name }}:${{ env.RELEASE_VERSION }}" >> $GITHUB_ENV
+
+      - name: Build The Docker Image
+        run: |
+          make \
+          docker-build \
+          TAG=${{ env.RELEASE_VERSION }} \
+          IMAGE_NAME=${{ env.IMAGE_NAME }} \
+          DATE=${{ github.event.head_commit.timestamp }}
+
+      - name: Push Image To Github Package
+        run: |
+          docker login docker.pkg.github.com -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+          docker push ${{ env.IMAGE_NAME}}
+
+      - name: Remove Image
+        run: |
+          docker image rm ${{ env.IMAGE_NAME}}
+          docker image prune -f --filter label=stage=builder
+
+      - name: Delete old version
+        uses: actions/delete-package-versions@v1
+        with:
+          num-old-versions-to-delete: 1
+          package-name: ${{ github.event.repository.name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
