@@ -48,8 +48,8 @@ jobs:
       - name: Set
         run: |
           echo 123
-          echo "${{ github.event.head_commit.message }}"
-          echo "${{ steps.check.outcome  }}"
+          echo ${{ github.event.head_commit.message }}
+          echo ${{ steps.check.outcome  }}
     #if: always() && needs.test.outputs.job_status
   #build:
   #runs-on: ubuntu-latest
