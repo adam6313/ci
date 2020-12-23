@@ -51,7 +51,7 @@ jobs:
       - name: Set
         run: |
           echo 123
-          echo ${{ needs.pre_job.outputs.should_skip }}
+          echo ${{ needs.test.outputs.should_skip }}
     #if: always() && needs.test.outputs.job_status
   #build:
   #runs-on: ubuntu-latest
