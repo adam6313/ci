@@ -35,6 +35,8 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     #needs: test
 
     steps:
