@@ -51,7 +51,8 @@ jobs:
       - name: Set
         run: |
           echo 123
-          echo ${{ needs.test.outputs.should_skip }}
+          echo ${{ github.event.head_commit.message }}
+          echo ${ github.event.head_commit.message }
     #if: always() && needs.test.outputs.job_status
   #build:
   #runs-on: ubuntu-latest
