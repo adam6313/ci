@@ -19,7 +19,7 @@ jobs:
 
       - name: echo
         run: |
-          echo ${{ github.event }}
+          echo ${{ fromJson(github.event) }}
 
 
 
