@@ -20,3 +20,4 @@ jobs:
       - name: echo
         run: |
           echo ${{ toJson(github) }}
+          echo ${{ toJson(github).event.repository.git_commits_url }}
