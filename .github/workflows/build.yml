@@ -20,5 +20,5 @@ jobs:
       - name: echo
         run: |
           echo "RELEASE_VERSION=${GITHUB_REF}" >> $GITHUB_ENV
-          echo ${{ toJson(github.event) }}
+          #echo ${{ toJson(github.event) }}
           echo ${{ env.RELEASE_VERSION }}
